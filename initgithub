@@ -1,0 +1,70 @@
+#!/bin/bash
+
+#COLORS
+
+greenColour="\e[0;32m\033[1m"
+endColour="\033[0m\e[0m"
+redColour="\e[0;31m\033[1m"
+blueColour="\e[0;34m\033[1m"
+yellowColour="\e[0;33m\033[1m"
+purpleColour="\e[0;35m\033[1m"
+turquoiseColour="\e[0;36m\033[1m"
+grayColour="\e[0;37m\033[1m"
+
+
+#help
+function helpPanel(){
+	echo  -e "\n${redColour}[-]Use: ./initgithub -o ${endColour}"
+	echo  -e "\n${redColour}[-] -o 1 ${endColour} ${yellowColour} Start a new local repository you migth created before in  ${endcolour}\n https://docs.github.com/en/github/getting-started-with-github/quickstart/create-a-repo ${endColour}"
+	echo  -e "\n${redColour}[-] -o 2 ${endColour} ${yellowColour} Make updates  to new changes ${endColour}"
+	exit 0
+}
+function start(){
+	echo  -e "\n${purpleColour}starting a new local repo :) ${endColour}"
+	echo  -e "\n${purpleColour}paste your repo link ${endColour}" && read linkrepo
+	echo -e  "\n${purpleColour}[-]${grayColour} $linkrepo ${endColour}  ${endColour}" 
+	echo  -e "\n${purpleColour}what branch :  ${endColour}" && read branch
+        echo -e  "\n${purpleColour}[-]${grayColour} $branch ${endColour}  ${endColour}" 
+        echo  -e "\n${purpleColour}message for commit :${endColour}" && read msg
+	echo "#start fast a repo" >> README.md
+	git init
+	git add  README.md > /dev/null 2>&1
+	git commit -m  $msg > /dev/null 2>&1
+	git branch -M $branch
+	git remote add origin $linkrepo > /dev/null 2>&1
+	git push -u origin $branch
+}
+
+function changes(){
+	echo -e  "\n${yellowColour}make changes to existing repo :| ${endColour}"
+        echo  -e "\n${greenColour}what branch :  ${endColour}" && read branch
+	echo -e "\n${greenColour}$branch ${endColour}"
+	echo -e "\n${greenColour}Mesagge for the commit:${endColour}" && read msg
+	git pull origin  $branch > /dev/null 2>&1
+	git add . > /dev/null 2>&1
+	git commit -m $msg >/dev/null 2>&1
+	git push origin $branch 
+}
+
+function Panel(){
+	echo -e  "\n${greenColour}--- EASY START---${endColour}"
+	echo -e "\n${greenColour}make easy u to * ${endColour}"
+}
+#main
+Panel
+declare -i  parameter_counter=0;while getopts  :o:h: flag
+do
+	case "${flag}" in
+		o) o=${OPTARG};let parameter_counter+=1;;
+		h) helpPanel;;
+	esac
+	
+	if [ $parameter_counter -ne 1 ]; then
+		helpPanel
+	fi
+	if [ $o == 1 ]; then
+		start
+	else
+		changes
+	fi
+done
